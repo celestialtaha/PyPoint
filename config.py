@@ -1,0 +1,1 @@
+curr_class_idx = 0
