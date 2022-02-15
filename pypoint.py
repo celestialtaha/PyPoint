@@ -7,9 +7,12 @@ import pickle
 import config
 
 """TODO
-        1. Add b.b labeling feature
-        2. Add MS COCO Saving format
-        3. Add save as json
+        1. Add previous button
+        2. Add undo feature
+        3. Load labels from saved data on displayed image
+        4. Add b.b labeling feature
+        5. Add MS COCO Saving format
+        6. Add save as json
 """
 
 labels={}
@@ -72,6 +75,9 @@ def click_event(event, x, y, flags, params):
         
         update_stat()
         cv2.imshow('image', img_stat)
+    elif event== cv2.EVENT_MBUTTONDOWN:
+        # undo operation
+        pass
     else:
         pass
 
@@ -116,6 +122,7 @@ if __name__=="__main__":
                 print(f"The label for {file} was succesfully saved!")
                 set_curr_class_idx(1)
             strg.save(i, file)
+
         elif key== ord('c'):
             # Clears the storage?
             pass
