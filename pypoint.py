@@ -1,3 +1,4 @@
+from workspace import storage
 import argparse
 import numpy as np
 import cv2
@@ -17,12 +18,14 @@ labels={}
 parser = argparse.ArgumentParser()
 parser.add_argument('--dir', type=str, required=True, default='single', help='The path to the file in which the images exist.')
 parser.add_argument('--classes',type=str, required=True, help='The name of the classes to be labeled. A list of str.')
+parser.add_argument('--workspace',type=str, required=False, default='./', help='Specifies a directory to save the last labeled item info.')
 parser.add_argument('--savedir',type=str, required=False, default='./', help='Specifies a directory to save the labeled data.')
 
 # ------------- Parse cml arguments and set config ------------------ #
 args = parser.parse_args()
 config.dir = args.dir
 config.save_dir = args.savedir
+config.workspace = args.workspace
 config.classes = args.classes.strip('[]').split(',')
 config.set_colors(len(config.classes))
 
@@ -80,7 +83,14 @@ def set_curr_class_idx(reset=-1):
 
 if __name__=="__main__":
 
-    for file in os.listdir(config.dir):
+    strg = storage.Storage('./workspace/')
+    last_idx, last_fname = [0, ""]
+    last_idx, last_fname = strg.load()
+
+    for i,file in enumerate(os.listdir(config.dir)):
+        if last_idx>0:
+            if i<=last_idx:
+                continue
         # read the image
         img = cv2.imread(os.path.join(config.dir, file), 1)
         img_stat = np.zeros((img.shape[0]+100, img.shape[1], img.shape[2]), dtype=img.dtype)
@@ -97,6 +107,7 @@ if __name__=="__main__":
         key = cv2.waitKey(0)
         if key == ord('q'):
             #Exit
+            #storage.save(i, file)
             break
         elif key == ord('n'):
             # Save and proceed to the next file
@@ -104,6 +115,10 @@ if __name__=="__main__":
                 pickle.dump(labels, f)
                 print(f"The label for {file} was succesfully saved!")
                 set_curr_class_idx(1)
+            strg.save(i, file)
+        elif key== ord('c'):
+            # Clears the storage?
+            pass
 
     # close the window
     cv2.destroyAllWindows()
