@@ -8,6 +8,12 @@ save_dir = './'
 colors = []
 #['sedan', 'bus', 'van', 'pickup']
 
+stat_height = 100
+last_image_cache = None
+img_stat= None
+undo = False
+curr_labels = {}
+
 def set_colors(num_colors=len(classes)):
     for i in np.arange(0., 360., 360. / num_colors):
         hue = i/360.
